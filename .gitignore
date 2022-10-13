@@ -1,0 +1,11 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+slides/index.qmd
+data/
+slides/index_cache
+data-raw/*.csv
+.Rdata
+.httr-oauth
+.DS_Store
