@@ -2,20 +2,20 @@
 
 # gerando os dados --------------------------------------------------------
 
-ar <- sample(0:2, 1)
-ma <- sample(0:2, 1)
-dif <- sample(0:2, 1)
+ar <- sample(0:1,1)
+ma <- sample(0:1,1)
+dif <- sample(0:1,1)
 
-ar_parm <- runif(ar)
-ma_parm <- runif(ma)
+ar_parm <- runif(ar, min = .8, max = .9)
+ma_parm <- runif(ma, min = .8, max = .9)
 
 dados <- data.frame(
-  mes = 1:300,
+  mes = 1:(300 + dif),
   vendas = arima.sim(list(
     order = c(ar,dif,ma),
     ma = ma_parm,
     ar = ar_parm
-  ), n = 300)[-1]
+  ), n = 300)
 )
 
 # montando os dados -------------------------------------------------------
@@ -30,7 +30,10 @@ dados_tsibble <- dados |>
 # descritiva --------------------------------------------------------------
 
 dados_tsibble |>
-  gg_tsdisplay(vendas, plot_type = "partial")
+  feasts::gg_tsdisplay(vendas, plot_type = "partial")
+
+
+tseries::adf.test(dados_tsibble$vendas)
 
 dados_tsibble |>
   fabletools::features(
@@ -43,14 +46,18 @@ dados_tsibble |>
 
 dados_tsibble |>
   dplyr::mutate(dif_vendas = tsibble::difference(vendas)) |>
-  gg_tsdisplay(dif_vendas, plot_type = "partial", lag_max = 30)
+  feasts::gg_tsdisplay(dif_vendas, plot_type = "partial", lag_max = 30)
 
+dados_tsibble |>
+  dplyr::mutate(dif_vendas = tsibble::difference(vendas)) |>
+  dplyr::mutate(dif_vendas2 = tsibble::difference(dif_vendas)) |>
+  feasts::gg_tsdisplay(dif_vendas2, plot_type = "partial", lag_max = 30)
 
 # modelagem ---------------------------------------------------------------
 
 fit <- dados_tsibble |>
   fabletools::model(
-    arima_manual = fable::ARIMA(vendas ~ 1 + pdq(2,0,2) + PDQ(0,0,0)),
+    # arima_manual = fable::ARIMA(vendas ~ 1 + pdq(2,0,2) + PDQ(0,0,0)),
     stepwise = fable::ARIMA(vendas ~ 1 + PDQ(0,0,0)),
     search = fable::ARIMA(vendas ~ 1 + PDQ(0,0,0), stepwise = FALSE)
   )
@@ -61,3 +68,12 @@ fit |>
   broom::glance() |>
   dplyr::select(.model, AIC) |>
   dplyr::arrange(AIC)
+
+fit |>
+  broom::augment() |>
+  dplyr::filter(.model == "stepwise") |>
+  feasts::gg_tsdisplay(.resid, plot_type = "partial", lag_max = 30)
+
+c(ar,dif,ma)
+ar_parm
+ma_parm
