@@ -475,3 +475,12 @@ plt.show()
 # Exercício em sala
 
 Faça a análise descritiva da série que está nesse link: https://raw.githubusercontent.com/padsInsper/202234-fa/main/material/lab01/serie_temporal.csv
+
+1. plotar a série
+2. plotar os gráficos sazonais
+3. Decomposição
+4. Teste de raiz unitária
+5. Previsão usando o prophet
+6. ACF e PACF
+7. ARIMA
+8. Teste ljung box no resíduo
