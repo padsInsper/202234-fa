@@ -472,3 +472,6 @@ fig2 = m.plot_components(forecast)
 plt.show()
 ```
 
+# Exercício em sala
+
+Faça a análise descritiva da série que está nesse link: https://raw.githubusercontent.com/padsInsper/202234-fa/main/material/lab01/serie_temporal.csv
