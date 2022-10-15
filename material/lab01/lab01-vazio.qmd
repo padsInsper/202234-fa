@@ -1,0 +1,394 @@
+---
+title: "Lab01"
+format:
+  html:
+    toc: true
+    code-fold: show
+---
+
+Vamos agora brincar de séries temporais.
+
+Um problema que precisamos enfrentar com séries temporais é que como os dados têm uma ordem, precisamos de alguma forma ter essa ordem escrita na base. 
+
+Além disso, a ordem é pelo tempo, que é algo que tras informação por si só. Por exemplo, se estamos com uma série temporal de vendas, é natural pensar que certas épocas do ano vendam mais que outras, e que isso se repita ano a ano.
+
+Por isso, uma base de dados de série temporal precisa saber lidar com essa natureza de dados.
+
+# Bases de dados
+
+Existem diversos pacotes utilizados para armazenar séries temporais no R. Veremos 3:
+
+- `{base}`: dá para fazer muita coisa só com o base/stats, então você verá bastante código desse tipo por aí.
+
+- `{xts}` / `{zoo}`: serve para organizar uma base de dados no formato de série temporal.
+
+- `{tsibble}`: é a versão *tidy*, mais recente (2017).
+
+
+## Base R
+
+Historicamente, isso era feito pela função `ts()`, que funciona assim:
+
+```{r}
+set.seed(1)
+
+# simulaçao de dados com um arima
+dados <- data.frame(
+  mes = 1:48,
+  vendas = arima.sim(list(order = c(1,1,0), ar = 0.7), n = 48)[-1]
+)
+
+plot(dados)
+```
+
+```{r}
+# agora o eixo x não é mais o mês!
+```
+
+Agora vamos plotar apenas a coluna vendas
+
+```{r}
+
+
+
+```
+
+Agora vamos definir uma periodicidade
+
+```{r}
+
+```
+
+Também funciona com deltat
+
+```{r}
+
+
+```
+
+Versão ggplot, usando pacote forecast (veremos adiante)
+
+```{r}
+
+```
+
+
+## xts
+
+O `{xts}` é uma versão mais "parruda" do `ts()`, criado para resolver algumas dificuldades dos objetos. Ganhou muita popularidade nos entre 2000-2015 e é usado como base para uma série de modelos. 
+
+Atualmente, o xts não é mais necessário para trabalhar com séries temporais. No entanto, é muito comum encontrá-lo em códigos de modelagem mais "roots", construídos por pessoas que aprenderam com base R.
+
+```{r}
+
+
+
+```
+
+Obs: outro pacote que você encontrará por aí é o `{zoo}`, mas ele é tão esquisito que não vale a pena estudá-lo. Se você encontrar código que usa o zoo e precisar reproduzir, recomendo que estude as funções de forma individualizada. O `{xts}` é uma forma de melhorar o `{zoo}`.
+
+## tsibble
+
+As `tsibble`s ([tsibble.tidyverts.org](https://tsibble.tidyverts.org)) são a versão tidy das séries temporais, e também a versão séries temporais das amadas tibbles. Pegando o exemplo anterior, temos
+
+```{r, error=TRUE}
+
+
+
+```
+
+Isso significa precisamos passar um índice, obrigatoriamente. O `{xts}` faz isso modificando o objeto, enquanto que a `tsibble` faz isso com uma coluna
+
+```{r}
+
+
+
+```
+
+outra alternativa:
+
+```{r}
+
+
+```
+
+Para dar a periodicidade, modificamos a coluna que indexa os dados, similar ao que faz o xts, mas de forma mais explícita:
+
+
+```{r}
+
+
+
+```
+
+
+```{r}
+# outra forma, com months()
+
+
+```
+
+
+Finalmente, para plotar, com o feasts
+
+```{r}
+
+
+
+```
+
+## Python
+
+Vocês me ensinem!!! Mas eu fiz assim
+
+```{python}
+
+
+
+
+```
+
+para plotar
+
+```{python}
+
+
+
+```
+
+
+# Estatísticas básicas
+
+## base R
+
+### decomposição
+
+aditivos e multiplicativos
+
+```{r}
+
+
+
+
+```
+
+
+
+$$Y = T + S + e$$
+
+$$log(Y) = log(T) + log(S) + log(e)$$
+
+```{r}
+
+
+
+
+```
+
+```{r}
+
+
+
+
+```
+
+## forecast
+
+O pacote `{forecast}` é uma das ferramentas mais usadas no dia-a-dia de quem trabalha com séries temporais. 
+
+Construído antes do tidymodels, trata-se de um pacote com diversos modelos para lidar com séries temporais, mas ainda fora do ambiente "tidy". O livro-base para uso do forecast é o FPP2 (https://otexts.com/fpp2/). 
+
+Atualmente, temos o FPP3 com alternativas "tidy", mas isso não implica que o forecast cairá em desuso, pois ele é muito bom.
+
+Por enquanto veremos só a parte descritiva. No próximo lab, trabalharemos com modelagem.
+
+```{r}
+
+
+
+```
+
+Season plot
+
+```{r}
+
+
+```
+
+polar
+
+```{r}
+
+
+
+```
+
+Mais exemplos no FPP2.
+
+Autocorrelação
+
+```{r}
+
+
+```
+
+```{r}
+
+
+
+```
+
+## feasts
+
+O `feasts` é o pacote atual para análise descritiva de séries temporais. Ele é descrito no FPP3 (https://otexts.com/fpp3/) e está alinhado com os princípios tidy.
+
+Season plot
+
+```{r}
+
+
+```
+
+Polar
+
+```{r}
+
+
+
+```
+
+Mais exemplos no FPP3.
+
+
+ACF
+
+```{r}
+dados_tsibble |> 
+  feasts::ACF(vendas) |> 
+  feasts::autoplot()
+```
+
+PACF
+
+```{r}
+
+
+
+```
+
+Gráfico de lags
+
+```{r}
+
+
+
+```
+
+
+Para pegar os componentes de forma tidy:
+
+
+```{r}
+
+```
+
+## Python
+
+Decomposição
+
+```{python}
+
+
+```
+
+Outras: me ensinem!
+
+
+## Exercício
+
+Faça a análise descritiva da série que está nesse link:
+
+
+
+# Forecasts simples
+
+## pacote forecast
+
+```{r}
+
+
+```
+
+
+```{r}
+
+
+
+```
+
+## pacote feasts
+
+Média móvel
+
+```{r}
+
+
+
+```
+
+Modelos que vimos no forecast
+
+```{r}
+
+
+
+```
+
+## Python
+
+Não sei fazer :(
+
+```{python}
+
+
+```
+
+
+# Prophet
+
+## R
+
+Forecast
+
+```{r}
+
+
+
+```
+
+
+Componentes
+
+```{r}
+
+
+
+```
+
+
+## Python
+
+```{python}
+
+
+
+```
+
+
+Componentes
+
+```{python}
+
+
+```
+
