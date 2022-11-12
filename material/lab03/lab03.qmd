@@ -3,6 +3,9 @@ title: "Meus ativos"
 format: 
   html:
     code-fold: true
+    monofont: "JetBrains Mono"
+execute: 
+  freeze: true
 ---
 
 Quiz: <https://forms.gle/CcMvpyXdhaacQtPi8>
@@ -325,11 +328,11 @@ vol_futuro
 
 Reproduzindo código daqui:
 
-https://www.codingfinance.com/post/2018-05-31-portfolio-opt-in-r/
+<https://www.codingfinance.com/post/2018-05-31-portfolio-opt-in-r/>
 
 Versão em python
 
-https://www.codingfinance.com/post/2018-05-31-portfolio-opt-in-python/
+<https://www.codingfinance.com/post/2018-05-31-portfolio-opt-in-python/>
 
 ```{r}
 da_wide <- da_train |> 
@@ -350,7 +353,7 @@ Next we will calculate the covariance matrix for all these stocks. We will NOT a
 
 ```{r}
 cov_mat <- cov(da_xts, use = "complete.obs")
-print(round(cov_mat,4))
+print(round(cov_mat,6))
 ```
 
 Before we apply our methods to thousands of random portfolio, let us demonstrate the steps on a single portfolio.
@@ -525,10 +528,6 @@ sum(betas * pesos_finais)
 beta_geral
 
 ```
-
-
-
-
 
 ```{r}
 
