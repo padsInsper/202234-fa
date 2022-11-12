@@ -1,0 +1,4 @@
+- source: lab03.qmd
+  quarto-pub:
+    - id: 394ce018-c39f-4289-8a83-087c1cb56993
+      url: 'https://quartopub.com/sites/jtrecenti/meus-ativos'
