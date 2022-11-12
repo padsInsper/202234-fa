@@ -531,11 +531,26 @@ beta_geral
 
 
 ```{r}
-da_model <- da_wide |> 
-  dplyr::inner_join(market_returns, "ref_date") |> 
-  dplyr::select(-ref_date)
 
-modelo_betas <- lm(ibov ~ . - 1, data = da_model)
-broom::tidy(modelo_betas)
+capm_lm_tudo <- lm(portfolio ~ ibov, data = all_returns) |> 
+  broom::tidy() |> 
+  dplyr::filter(term == "ibov") |> 
+  with(estimate)
+
+capm_lm_individual <- purrr::map_dbl(ativos, \(ativo) {
+  da_model <- da_train |> 
+    dplyr::filter(ticker == ativo) |> 
+    dplyr::inner_join(market_returns, "ref_date")
+  lm(ret_closing_prices ~ ibov, data = da_model) |> 
+    broom::tidy() |> 
+    dplyr::filter(term == "ibov") |> 
+    dplyr::pull(estimate)
+}) |> 
+  purrr::set_names(ativos)
+
+
+capm_lm_tudo
+
+capm_lm_individual
 ```
 
